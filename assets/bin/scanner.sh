@@ -27,8 +27,8 @@ then
         elif [ -e "/data/av/quarantine/${filename}" ]
         then
             printf "  --> File quarantined / nok\n"
-            mv -f "/data/av/scan/info" "/data/av/nok/${filename}"
-            printf "  --> Scan report moved to /data/av/nok/${filename}\n"
+            mv -f "/data/av/scan/info" "/data/av/ok/${filename}.log"
+            printf "  --> Scan report moved to /data/av/ok/${filename}.log\n"
         fi
     done
     printf "Done with processing\n"
