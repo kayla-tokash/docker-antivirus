@@ -4,8 +4,18 @@ if (( ${#files} ))
 then
     printf "Found files to process\n"
     for file in "/data/av/queue"/* ; do
-        filename=`basename $file`
-        mv -f $file "/data/av/scan/${filename}"
+        filename=`basename "$file"`
+        # inotify sends false positives under some circumstances
+        # check the file size difference to be safe
+        size_start=$(du "$file" | awk '{print $1}')
+        sleep 5
+        size_now=$(du "$file" | awk '{print $1}')
+        if [[ "$size_start" -ne "$size_now" ]]
+        then
+            printf "Cannot not process file, '$filename'. It seems to be open."
+            continue
+        fi
+        mv -f "$file" "/data/av/scan/${filename}"
         printf "Processing /data/av/scan/${filename}\n"
         /usr/local/bin/scanfile.sh > /data/av/scan/info 2>&1
         if [ -e "/data/av/scan/${filename}" ]
